@@ -1,0 +1,16 @@
+# Node modules
+node_modules/
+
+# Archivos de entorno
+.env
+
+# Logs
+*.log
+
+# Directorios de configuración de editor (opcional, según el editor que uses)
+.vscode/
+.idea/
+
+# Archivos temporales de sistema
+.DS_Store
+Thumbs.db

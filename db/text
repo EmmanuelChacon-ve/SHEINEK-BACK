@@ -1,0 +1,66 @@
+-- Crear la tabla de usuarios
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Crear la tabla de roles
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- Tabla intermedia para la relación muchos a muchos entre users y roles
+CREATE TABLE user_has_role (
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role_id INT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, role_id)
+);
+
+-- Crear la tabla de clientes
+CREATE TABLE customers (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    phone VARCHAR(20),
+    address TEXT,
+    debt DECIMAL(10,2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Crear la tabla de fechas de pedidos (batch de pedidos)
+CREATE TABLE order_batches (
+    id SERIAL PRIMARY KEY,
+    batch_date DATE NOT NULL UNIQUE,  -- Fecha en la que se realizarán los pedidos
+    total_cost DECIMAL(10,2) DEFAULT 0.00  -- Se calculará después de agregar los pedidos
+);
+
+-- Crear la tabla de pedidos
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    batch_id INT NOT NULL REFERENCES order_batches(id) ON DELETE CASCADE,
+    customer_id INT NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total_amount DECIMAL(10,2) NOT NULL,
+    amount_paid DECIMAL(10,2) DEFAULT 0.00,
+    commission DECIMAL(10,2) DEFAULT 0.00,
+    total_with_commission DECIMAL(10,2) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'Pending'
+);
+
+-- Crear la tabla de productos dentro de un pedido
+CREATE TABLE order_items (
+    id SERIAL PRIMARY KEY,
+    order_id INT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    product_name VARCHAR(100) NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    unit_price DECIMAL(10,2) NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL
+);
+
