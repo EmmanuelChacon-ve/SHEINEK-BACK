@@ -71,12 +71,12 @@ const createOrder = async (batch_id, customer_id, items, amount_paid_raw) => {
     }
 
     // Actualizar total del lote
-    const updateBatchQuery = `
+    /*  const updateBatchQuery = `
       UPDATE order_batches 
       SET total_cost = total_cost + $1
       WHERE id = $2;
     `;
-    await client.query(updateBatchQuery, [total_with_commission, batch_id]);
+    await client.query(updateBatchQuery, [total_with_commission, batch_id]); */
 
     await client.query("COMMIT");
 
