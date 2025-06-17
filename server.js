@@ -9,6 +9,7 @@ const rolRoutes = require("./routes/rolRoutes.js");
 const customersRoutes = require("./routes/customerRoutes.js");
 const orderBatchRoutes = require("./routes/orderBatchRoutes.js");
 const orderRoutes = require("./routes/orderRoutes.js");
+const capitalRoutes = require("./routes/capitalRoutes.js");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -24,6 +25,7 @@ app.use("/api", [
   customersRoutes,
   orderBatchRoutes,
   orderRoutes,
+  capitalRoutes,
 ]);
 
 app.get("/", (req, res) => {

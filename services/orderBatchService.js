@@ -17,9 +17,16 @@ const deleteBatch = async (id) => {
   }
   return await orderBatchRepository.deleteBatch(id);
 };
+const updateTotalCost = async (id, total_cost) => {
+  if (!id || total_cost === undefined || isNaN(total_cost)) {
+    throw new Error("ID y total_cost válidos son obligatorios");
+  }
+  return await orderBatchRepository.updateTotalCost(id, total_cost);
+};
 
 module.exports = {
   createBatch,
   getAllBatches,
   deleteBatch,
+  updateTotalCost,
 };

@@ -129,6 +129,8 @@ const getOrderDetailsByBatch = async (batch_id) => {
     SELECT 
       o.id AS order_id,
       o.batch_id,
+      ob.batch_date,
+      ob.total_cost,
       c.first_name || ' ' || c.last_name AS customer_name,
       oi.product_name,
       o.total_amount,
@@ -139,14 +141,59 @@ const getOrderDetailsByBatch = async (batch_id) => {
     FROM orders o
     JOIN customers c ON o.customer_id = c.id
     JOIN order_items oi ON o.id = oi.order_id
+    JOIN order_batches ob ON o.batch_id = ob.id
     WHERE o.batch_id = $1;
   `;
   const result = await pool.query(query, [batch_id]);
   return result.rows;
 };
 
+const updateOrderAmountPaidInDB = async (order_id, amount_paid_raw) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    // Obtener el monto abonado actual
+    const result = await client.query(
+      `SELECT amount_paid FROM orders WHERE id = $1`,
+      [order_id]
+    );
+    const currentAmountPaid = parseFloat(result.rows[0].amount_paid);
+
+    // Parsear el nuevo monto recibido del frontend
+    const amount_paid_to_add = parseFloat(
+      amount_paid_raw.toString().replace(/\./g, "").replace(",", ".")
+    );
+
+    // Calcular el nuevo total
+    const newTotalPaid = currentAmountPaid + amount_paid_to_add;
+
+    // Actualizar en la base de datos
+    await client.query(`UPDATE orders SET amount_paid = $1 WHERE id = $2`, [
+      newTotalPaid,
+      order_id,
+    ]);
+
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+const getOrderByIdRepository = async (orderId) => {
+  const result = await pool.query(`SELECT * FROM orders WHERE id = $1`, [
+    orderId,
+  ]);
+  return result.rows[0]; // Puede ser undefined si no existe
+};
+
 module.exports = {
   createOrder,
   deleteOrder,
   getOrderDetailsByBatch,
+  updateOrderAmountPaidInDB,
+  getOrderByIdRepository,
 };

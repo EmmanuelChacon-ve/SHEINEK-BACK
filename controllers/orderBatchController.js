@@ -33,9 +33,23 @@ const deleteBatch = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+const updateTotalCost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { total_cost } = req.body;
+    const updatedBatch = await orderBatchService.updateTotalCost(
+      id,
+      Number(total_cost)
+    );
+    res.status(200).json(updatedBatch);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 module.exports = {
   createBatch,
   getAllBatches,
   deleteBatch,
+  updateTotalCost,
 };

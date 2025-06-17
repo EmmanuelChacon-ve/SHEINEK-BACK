@@ -21,8 +21,20 @@ const deleteBatch = async (id) => {
   const result = await pool.query(query, values);
   return result.rows[0]; // Retorna el registro eliminado (opcional)
 };
+const updateTotalCost = async (id, total_cost) => {
+  const query = `
+    UPDATE order_batches
+    SET total_cost = $1
+    WHERE id = $2
+    RETURNING *;
+  `;
+  const values = [total_cost, id];
+  const result = await pool.query(query, values);
+  return result.rows[0];
+};
 module.exports = {
   createBatch,
   getAllBatches,
   deleteBatch,
+  updateTotalCost,
 };

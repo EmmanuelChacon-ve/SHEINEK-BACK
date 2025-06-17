@@ -64,3 +64,18 @@ CREATE TABLE order_items (
     total_price DECIMAL(10,2) NOT NULL
 );
 
+CREATE TABLE capital_status (
+  id SERIAL PRIMARY KEY,
+  current_balance NUMERIC(10,2) NOT NULL,
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE capital_movements (
+  id SERIAL PRIMARY KEY,
+  type VARCHAR(50) NOT NULL, -- 'aporte', 'retiro', 'gasto', etc.
+  description TEXT,
+  amount NUMERIC(10, 2) NOT NULL,
+  movement_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  balance_after NUMERIC(10, 2) -- opcional, para historial
+);
