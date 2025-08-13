@@ -19,7 +19,7 @@ const createOrder = async (batch_id, customer_id, items, amount_paid_raw) => {
         10
       );
       const quantity = parseInt(item.quantity, 10);
-      const total_price = unit_price * quantity;
+      const total_price = unit_price;
       return {
         ...item,
         unit_price,
